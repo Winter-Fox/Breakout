@@ -16,7 +16,11 @@ public:
 		color_ = D2D1::ColorF(D2D1::ColorF::Pink);
 		acceleration_ = { 0, -1 };
 	};
-	std::vector<Object*> collisionWith(std::vector<Object*>);
+
+	std::vector<Object*> collisionWith(std::vector<Object*> sceneObjects);
+	void move(D2D1_POINT_2F newPosition) override;
+	void draw(ID2D1HwndRenderTarget*, ID2D1SolidColorBrush*) override;
+
 private:
 	D2D1_ELLIPSE ellipse_;
 	MathVector acceleration_;

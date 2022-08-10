@@ -3,7 +3,7 @@
 class Block : public Object
 {
 public:
-	Block(D2D1_POINT_2F center, unsigned int strength, int points, float width, float height) :
+	Block(D2D1_POINT_2F center, float width, float height, unsigned int strength, int points) :
 		Object(center, width, height), 
 		strength_(strength), points_(points)
 	{
@@ -30,6 +30,8 @@ public:
 			break;
 		}
 	};
+
+	void draw(ID2D1HwndRenderTarget*, ID2D1SolidColorBrush*) override;
 private:
 	D2D1_RECT_F	   border_;
 	unsigned int strength_;
