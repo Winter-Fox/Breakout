@@ -21,9 +21,6 @@
     <ClCompile Include="Block.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MovableObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Ball.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -50,5 +47,11 @@
     <ClInclude Include="BaseWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GameWindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="DpiAwareManifest.xml" />
   </ItemGroup>
 </Project>

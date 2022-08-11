@@ -1,6 +1,9 @@
 #include "Block.h"
 
-void Block::draw(ID2D1HwndRenderTarget*, ID2D1SolidColorBrush*) 
+void Block::draw(ID2D1HwndRenderTarget* pRenderTarget, ID2D1SolidColorBrush* pBrush) 
 {
-	int a = 5;
+	pBrush->SetColor(color_);
+	pRenderTarget->FillRectangle(border_, pBrush);
+	pBrush->SetColor(D2D1::ColorF(D2D1::ColorF::Black));
+	pRenderTarget->DrawRectangle(border_, pBrush);
 }

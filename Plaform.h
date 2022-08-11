@@ -12,7 +12,7 @@ public:
 		color_ = D2D1::ColorF(D2D1::ColorF::Green);
 	};
 
-	void move(D2D1_POINT_2F newPosition) override;
+	void move(float byX, float byY) override;
 	void draw(ID2D1HwndRenderTarget*, ID2D1SolidColorBrush*) override;
 private:
 	D2D1_RECT_F border_;

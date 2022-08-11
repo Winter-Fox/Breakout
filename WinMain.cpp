@@ -1,52 +1,6 @@
-#include <windows.h>
-#include <d2d1.h>
-#pragma comment(lib, "d2d1")
+#include "GameWindow.h"
 
-#include <vector>
-#include <memory>
-
-#include "BaseWindow.h"
-#include "Block.h"
-#include "Ball.h"
-#include "Plaform.h"
-
-template <class T> void SafeRelease(T** ppT)
-{
-    if (*ppT)
-    {
-        (*ppT)->Release();
-        *ppT = NULL;
-    }
-}
-
-class MainWindow : public BaseWindow<MainWindow>
-{
-    ID2D1Factory*           pFactory;
-    ID2D1HwndRenderTarget*  pRenderTarget;
-    ID2D1SolidColorBrush*   pBrush;
-    D2D1_ELLIPSE            ellipse;
-
-    void    CalculateLayout();
-    HRESULT CreateGraphicsResources();
-    void    DiscardGraphicsResources();
-    void    OnPaint();
-    void    Resize();
-
-    std::vector<std::unique_ptr<Object>> sceneObjects_;
-    std::unique_ptr<Ball> ball_;
-    std::unique_ptr<Platform> platform_;
-public:
-
-    MainWindow() : pFactory(NULL), pRenderTarget(NULL), pBrush(NULL)
-    {
-    }
-
-    PCWSTR  ClassName() const { return L"Circle Window Class"; }
-    LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);
-};
-
-// Recalculate drawing layout when the size of the window changes.
-
+// 
 void MainWindow::CalculateLayout()
 {
     if (pRenderTarget != NULL)
@@ -61,7 +15,8 @@ void MainWindow::CalculateLayout()
         {
             for (int col = 0; col < colBlockNum; col++) 
             {
-                D2D1_POINT_2F blockCenter = D2D1::Point2F((col+1)*blockWidth/2, row*blockHeight/2);
+                D2D1_POINT_2F blockCenter = D2D1::Point2F((col+1)*blockWidth - (blockWidth/2), 
+                    (row+1)*blockHeight - (blockHeight/2));
                 std::unique_ptr<Object> newBlock = std::make_unique<Block>(blockCenter, blockWidth, blockHeight,
                     1, 100);
                 sceneObjects_.push_back(std::move(newBlock));
@@ -74,8 +29,8 @@ void MainWindow::CalculateLayout()
 
         //Create ball
         D2D1_POINT_2F ballCenter = platformCenter;
-        ballCenter.y -= 10;
         float radius = min(size.height, size.width) / 30;
+        ballCenter.y -= 250.0f;
         ball_ = std::make_unique<Ball>(ballCenter, radius);
     }
 }
@@ -157,6 +112,35 @@ void MainWindow::Resize()
     }
 }
 
+void MainWindow::MoveObject(MovableObject* object, float byX, float byY)
+{
+    object->move(byX, byY);
+    InvalidateRect(m_hwnd, NULL, FALSE);
+}
+
+void MainWindow::OnKeyDown(UINT key) 
+{
+    switch (key)
+    {
+    case 0x41:
+    case VK_LEFT:
+        MoveObject(platform_.get(), -1 * plaformSpeed_, 0);
+        break;
+    case 0x44:
+    case VK_RIGHT:
+        MoveObject(platform_.get(), 1 * plaformSpeed_, 0);
+        break;
+    case 0x57:
+    case VK_UP:
+        MoveObject(platform_.get(), 0, -1 * plaformSpeed_);
+        break;
+    case 0x53:
+    case VK_DOWN:
+        MoveObject(platform_.get(), 0, 1 * plaformSpeed_);
+        break;
+    }
+}
+
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
 {
     MainWindow win;
@@ -204,6 +188,10 @@ LRESULT MainWindow::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 
     case WM_SIZE:
         Resize();
+        return 0;
+
+    case WM_KEYDOWN:
+        OnKeyDown((UINT)wParam);
         return 0;
     }
     return DefWindowProc(m_hwnd, uMsg, wParam, lParam);

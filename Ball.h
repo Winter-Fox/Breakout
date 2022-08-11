@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <memory>
 
 #include "MovableObject.h"
 #include "Block.h"
@@ -17,8 +18,9 @@ public:
 		acceleration_ = { 0, -1 };
 	};
 
-	std::vector<Object*> collisionWith(std::vector<Object*> sceneObjects);
-	void move(D2D1_POINT_2F newPosition) override;
+	Object* collisionWith(std::vector<std::unique_ptr<Object>> sceneObjects);
+
+	void move(float byX, float byY) override;
 	void draw(ID2D1HwndRenderTarget*, ID2D1SolidColorBrush*) override;
 
 private:
